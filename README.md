@@ -1,3 +1,3 @@
 # HelperBot
 Chat bot for volontiers
-21.43  6/07/22
+22.10  6/07/22
