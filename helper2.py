@@ -1,4 +1,4 @@
-# 17.36 06/07/22
+# 13.04 007/07/22 PyCharm
 from flask import Flask
 from flask import request
 # import requests
