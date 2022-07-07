@@ -39,17 +39,17 @@ class Citizen(object):
         self.round = 0
         self.info_type = ''
         self.quastions = ['', 'Введите ФИО', 'Введите телефон', 'Введите дату рождения (дд.мм.гггг)',
-         'Введите адрес', 'Введите число проживающих' , 'Введите ФИО и возраст проживающих',
-         'Есть ли среди проживающих инвалиды?', 'Есть ли дети?',
-         'Если есть, укажите возраст', '10. Нужны ли продукты питания?', '11. Вода?',
-         '12. Лекарства?', '13. Укажите количество', '14. Средства личной гигиены?',
-         '15. Укажите количество', '16. Памперсы?', '17. Особенности диеты и т.п.',
-         '18. Даю согласие на обработку персональных данных.',
-         '19. Даю согласие на фото/видео.']
+                          'Введите адрес', 'Введите число проживающих', 'Введите ФИО и возраст проживающих',
+                          'Есть ли среди проживающих инвалиды?', 'Есть ли дети?',
+                          'Если есть, укажите возраст', '10. Нужны ли продукты питания?', '11. Вода?',
+                          '12. Лекарства?', '13. Укажите количество', '14. Средства личной гигиены?',
+                          '15. Укажите количество', '16. Памперсы?', '17. Особенности диеты и т.п.',
+                          '18. Даю согласие на обработку персональных данных.',
+                          '19. Даю согласие на фото/видео.']
         self.citizen_data = {'fio': '', 'phone': '', 'birth': '', 'addr': '', 'people_num': '', 'people_fio': '',
-        'invalids': '', 'children': '', 'children_age': '','food': '', 'drugs': '', 'water': '',
-        'products_detail': '', 'gigien':'','gigien_num': '',  'pampers':'','diet': '',
-        'pers_data_agreement': '', 'photo_agreement': ''}
+                             'invalids': '', 'children': '', 'children_age': '', 'food': '', 'drugs': '', 'water': '',
+                             'products_detail': '', 'gigien': '', 'gigien_num': '', 'pampers': '', 'diet': '',
+                             'pers_data_agreement': '', 'photo_agreement': ''}
 
     def conversation(self, user_text):
         # log_text = 'line 88 in conversation'
@@ -82,9 +82,9 @@ class Citizen(object):
                            '16. Памперсы?\n' \
                            '17. Особенности диеты и т.п.\n' \
                            '18. Даю согласие на обработку персональных данных.\n' \
-                           '19. Даю согласие на фото/видео.\n'\
-                           'Для просмотра данных нажмите кнопку "Просмотр информации",'\
-                           ' далее выберите какие данные Вас интересуют: полный список,'\
+                           '19. Даю согласие на фото/видео.\n' \
+                           'Для просмотра данных нажмите кнопку "Просмотр информации",' \
+                           ' далее выберите какие данные Вас интересуют: полный список,' \
                            ' данные по конкретному человеку, данные по группе лиц. Далее следуйте подсказкам\n'
             send_message(url, self._id, text_to_send)
             self.round = 0
@@ -234,8 +234,8 @@ class Citizen(object):
                 else:
                     # log('line 226')
                     mycol = mydb["people"]
-                    people_in_range = mycol.find({"birth_year":{"$gt":start_year, "$lt":fin_year}})
-                # if user_text == 'Информация по конкретному человеку':
+                    people_in_range = mycol.find({"birth_year": {"$gt": start_year, "$lt": fin_year}})
+                    # if user_text == 'Информация по конкретному человеку':
                     # log(str(people_in_range) + 'line 230')
                     text_to_send = ''
                     people_list = []
@@ -243,7 +243,8 @@ class Citizen(object):
                         people_list.append(x)
                         # print(f"ФИО: {x['fio']}, дата рождения: {x['birth']}")
                     for i in range(len(people_list)):
-                        text_to_send += str(i+1) + f") ФИО: {people_list[i]['fio']}, дата рождения: {people_list[i]['birth']}\n"
+                        text_to_send += str(
+                            i + 1) + f") ФИО: {people_list[i]['fio']}, дата рождения: {people_list[i]['birth']}\n"
                     send_message(url, self._id, text_to_send)
                     self.round -= 1
                     return
@@ -392,22 +393,22 @@ class Citizen(object):
             self.round += 1
             return
 
-
-
         if self.round == 20:
             self.citizen_data['photo_agreement'] = user_text
             # log(user_text)
             mycol = mydb["people"]
+            citizenDataToCSV = [self.citizen_data]
+            print(citizenDataToCSV)
             citizenDataToDb = self.citizen_data
             write_to_base(citizenDataToDb)
-            write_to_csv(self.citizen_data)
+            write_to_csv(citizenDataToCSV)
             text_to_send = str(self.citizen_data)
             # send_message(url, self._id, text_to_send)
             # try:
             #     mycol.insert_one(citizenDataToDb)
             # except:
             #     pass
-                # log('line401')
+            # log('line401')
             # log(citizenDataToDb)
             # text_to_send = str(citizenDataToDb)
             send_message(url, self._id, text_to_send)
@@ -418,6 +419,7 @@ class Citizen(object):
         #     self.round += 1
         #     return
 
+
 def write_to_base(citizenDataToDb):
     mycol = mydb["people"]
     try:
@@ -425,15 +427,17 @@ def write_to_base(citizenDataToDb):
     except:
         pass
 
-def write_to_csv(citizenDataToDb):
+
+def write_to_csv(citizenDataToCSV):
     citizen_info = ['fio', 'phone', 'birth', 'addr', 'people_num', 'people_fio',
-    'invalids', 'children', 'children_age','food', 'drugs', 'water',
-    'products_detail', 'gigien','gigien_num',  'pampers','diet',
-    'pers_data_agreement', 'photo_agreement']
+                    'invalids', 'children', 'children_age', 'food', 'drugs', 'water',
+                    'products_detail', 'gigien', 'gigien_num', 'pampers', 'diet',
+                    'pers_data_agreement', 'photo_agreement', 'birth_year', '_id']
     with open('citizens.csv', 'w') as file:
-        writer = csv.DictWriter(file, fieldnames = citizen_info)
+        writer = csv.DictWriter(file, fieldnames=citizen_info)
         writer.writeheader()
-        writer.writerows(citizenDataToDb)
+        writer.writerows(citizenDataToCSV)
+
 
 @app.route('/helper2022', methods=['POST', 'GET'])
 def helper2022():
@@ -445,7 +449,7 @@ def helper2022():
             # log('line_385')
             r = request.get_json()
             req = str(r)
-            log(t + 'line_427' + t )
+            log(t + 'line_427' + t)
             # log(str(get_chat_id(r)) + 'line 389')
             chat_id = get_chat_id(r)
             name = get_name(r)
