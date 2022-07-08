@@ -416,6 +416,7 @@ class Citizen(object):
                                    f"17. Особенности диеты и т.п.: {self.citizen_data['diet']}\n" \
                                    f"18. Cогласие на обработку персональных данных: {self.citizen_data['pers_data_agreement']} \n" \
                                    f"19. Cогласие на фото/видео: {self.citizen_data['photo_agreement']}\n"
+            send_message(url, self._id, text_to_send)
             self.round += 1
             return
             # log(user_text)
