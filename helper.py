@@ -55,7 +55,7 @@ class Citizen(object):
         # log_text = 'line 88 in conversation'
         # log(log_text)
 
-        if 'start' in user_text.lower() or 'старт' in user_text.lower() or 'Начать сначала'.lower() in user_text.lower():
+        if 'start' in user_text.lower() or 'старт' in user_text.lower() or 'Начать сначала'.lower() in user_text.lower() or 'Изменить'.lower() in user_text.lower():
             t = time.asctime()
             # log(f'row67 {t}')
             keys = ['Внести данные.', 'Правила.', 'Просмотреть информацию.', 'Начать сначала.']
@@ -417,13 +417,16 @@ class Citizen(object):
                                    f"18. Cогласие на обработку персональных данных: {self.citizen_data['pers_data_agreement']} \n" \
                                    f"19. Cогласие на фото/видео: {self.citizen_data['photo_agreement']}\n"
             send_message(url, self._id, text_to_send)
+            keys = ['Сохранить', 'Изменить']
+            text = f'Привет {self._name}! Вас приветствует бот-помошник'
+            send_keyboard(self._id, keys, text, bot)
             self.round += 1
             return
             # log(user_text)
         if self.round == 21:
-            if user_text == 'Просмотреть':
-                text_to_send = 'You data'
-                send_message(url, self._id, text_to_send)
+            # if user_text == 'Просмотреть':
+            #     text_to_send = 'You data'
+            #     send_message(url, self._id, text_to_send)
             # mycol = mydb["people"]
             citizenDataToCSV = [self.citizen_data]
             print(citizenDataToCSV)
