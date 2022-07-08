@@ -62,7 +62,7 @@ class Citizen(object):
             text = f'Привет {self._name}! Вас приветствует бот-помошник'
             send_keyboard(self._id, keys, text, bot)
             self.round = 0
-        if user_text.lower() == 'правила':
+        if user_text.lower() == 'правила.':
             text_to_send = 'Для того чтобы внести данные нажмите кнопку  "Внести данные" и введите данные в формате:\n' \
                            '1. ФИО\n' \
                            '2. Телефон\n' \
@@ -89,13 +89,13 @@ class Citizen(object):
             send_message(url, self._id, text_to_send)
             self.round = 0
             return
-        if user_text == 'Внести данные':
+        if user_text == 'Внести данные.':
             self.command = 'Внести данные'
             self.round += 1
             # log('Внести данные row 87')
             self.insert_data(user_text)
             return
-        if user_text == 'Просмотреть информацию':
+        if user_text == 'Просмотреть информацию.':
             self.command = 'Просмотреть информацию'
             self.round += 1
             # log('Просмотреть информацию 95')
