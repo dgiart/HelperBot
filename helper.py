@@ -405,7 +405,7 @@ class Citizen(object):
             if user_text == 'Просмотреть':
                 text_to_send = 'You data'
                 send_message(url, self._id, text_to_send)
-            mycol = mydb["people"]
+            # mycol = mydb["people"]
             citizenDataToCSV = [self.citizen_data]
             print(citizenDataToCSV)
             citizenDataToDb = self.citizen_data
