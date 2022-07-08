@@ -41,11 +41,11 @@ class Citizen(object):
         self.quastions = ['', 'Введите ФИО', 'Введите телефон', 'Введите дату рождения (дд.мм.гггг)',
                           'Введите адрес', 'Введите число проживающих', 'Введите ФИО и возраст проживающих',
                           'Есть ли среди проживающих инвалиды?', 'Есть ли дети?',
-                          'Если есть, укажите возраст', '10. Нужны ли продукты питания?', '11. Вода?',
-                          '12. Лекарства?', '13. Укажите количество', '14. Средства личной гигиены?',
-                          '15. Укажите количество', '16. Памперсы?', '17. Особенности диеты и т.п.',
-                          '18. Даю согласие на обработку персональных данных.',
-                          '19. Даю согласие на фото/видео.']
+                          'Если есть, укажите возраст', 'Нужны ли продукты питания?', 'Вода?',
+                          'Лекарства?', 'Укажите количество', 'Средства личной гигиены?',
+                          'Укажите количество', 'Памперсы?', 'Особенности диеты и т.п.',
+                          'Даю согласие на обработку персональных данных.',
+                          'Даю согласие на фото/видео.']
         self.citizen_data = {'fio': '', 'phone': '', 'birth': '', 'addr': '', 'people_num': '', 'people_fio': '',
                              'invalids': '', 'children': '', 'children_age': '', 'food': '', 'drugs': '', 'water': '',
                              'products_detail': '', 'gigien': '', 'gigien_num': '', 'pampers': '', 'diet': '',
@@ -395,9 +395,27 @@ class Citizen(object):
 
         if self.round == 20:
             self.citizen_data['photo_agreement'] = user_text
-            keys = ['Просмотреть', 'Начать сначала']
-            text = f'Проверьте внесенные данные'
-            send_keyboard(self._id, keys, text, bot)
+            text_to_send= f'Проверьте внесенные данные'
+            send_message(url, self._id, text_to_send)
+            text_to_send = f"1. ФИО: {self.citizen_data['fio']}\n" \
+                                   f"2. Телефон: {self.citizen_data['phone']}\n" \
+                                   f"3. Датa рождения: {self.citizen_data['birth']}\n" \
+                                   f"4. Адрес: {self.citizen_data['addr']}\n" \
+                                   f"5. Число проживающих: {self.citizen_data['people_num']}\n" \
+                                   f"6. ФИО и возраст проживающих: {self.citizen_data['people_fio']}\n" \
+                                   f"7. Есть ли среди проживающих инвалиды? {self.citizen_data['invalids']}\n" \
+                                   f"8. Наличие детей: {self.citizen_data['children']}\n" \
+                                   f"9. Возраст детей: {self.citizen_data['children_age']}\n" \
+                                   f"10. Небходимость продуктов питания: {self.citizen_data['food']}\n" \
+                                   f"11. Воды: {self.citizen_data['water']}\n" \
+                                   f"12. Лекарств: {self.citizen_data['drugs']}\n" \
+                                   f"13. Kоличество: {self.citizen_data['products_detail']}\n" \
+                                   f"14. Средства личной гигиены: {self.citizen_data['gigien']}\n" \
+                                   f"15. Kоличество {self.citizen_data['gigien_num']}\n" \
+                                   f"16. Памперсы: {self.citizen_data['pampers']}\n" \
+                                   f"17. Особенности диеты и т.п.: {self.citizen_data['diet']}\n" \
+                                   f"18. Cогласие на обработку персональных данных: {self.citizen_data['pers_data_agreement']} \n" \
+                                   f"19. Cогласие на фото/видео: {self.citizen_data['photo_agreement']}\n"
             self.round += 1
             return
             # log(user_text)
