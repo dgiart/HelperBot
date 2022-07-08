@@ -58,7 +58,7 @@ class Citizen(object):
         if 'start' in user_text.lower() or 'старт' in user_text.lower() or 'Начать сначала'.lower() in user_text.lower() or 'Изменить'.lower() in user_text.lower():
             t = time.asctime()
             # log(f'row67 {t}')
-            keys = ['Внести данные.', 'Правила.', 'Просмотреть информацию.', 'Начать сначала.', '/start']
+            keys = ['Внести данные.', 'Правила.', 'Просмотреть информацию.', 'Начать сначала.']#, '/start']
             text = f'Привет {self._name}! Вас приветствует бот-помошник'
             send_keyboard(self._id, keys, text, bot)
             self.round = 0
@@ -417,7 +417,7 @@ class Citizen(object):
                                    f"18. Cогласие на обработку персональных данных: {self.citizen_data['pers_data_agreement']} \n" \
                                    f"19. Cогласие на фото/видео: {self.citizen_data['photo_agreement']}\n"
             send_message(url, self._id, text_to_send)
-            keys = ['Сохранить', 'Изменить', 'Начать с начала']
+            keys = ['Сохранить', 'Изменить', 'Начать сначала']
             text = f'Что дальше?'
             send_keyboard(self._id, keys, text, bot)
             self.round += 1
