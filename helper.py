@@ -58,7 +58,7 @@ class Citizen(object):
         if 'start' in user_text.lower() or 'старт' in user_text.lower() or 'Начать сначала'.lower() in user_text.lower() or 'Изменить'.lower() in user_text.lower():
             t = time.asctime()
             # log(f'row67 {t}')
-            keys = ['Внести данные.', 'Правила.', 'Просмотреть информацию.', 'Начать сначала.']
+            keys = ['Внести данные.', 'Правила.', 'Просмотреть информацию.', 'Начать сначала.', '/start']
             text = f'Привет {self._name}! Вас приветствует бот-помошник'
             send_keyboard(self._id, keys, text, bot)
             self.round = 0
