@@ -417,8 +417,8 @@ class Citizen(object):
                                    f"18. Cогласие на обработку персональных данных: {self.citizen_data['pers_data_agreement']} \n" \
                                    f"19. Cогласие на фото/видео: {self.citizen_data['photo_agreement']}\n"
             send_message(url, self._id, text_to_send)
-            keys = ['Сохранить', 'Изменить']
-            text = f'Привет {self._name}! Вас приветствует бот-помошник'
+            keys = ['Сохранить', 'Изменить', 'Начать с начала']
+            text = f'Что дальше?'
             send_keyboard(self._id, keys, text, bot)
             self.round += 1
             return
