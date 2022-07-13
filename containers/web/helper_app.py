@@ -14,8 +14,10 @@ from bot_funcs import T, log, get_chat_id, get_name, \
     get_text  # send_message, send_image, send_keyboard, delete_keyboard, get_chat_id, get_name, get_text
 from bot_funcs import date_verificator, delete_keyboard, send_message, send_keyboard
 
-myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-db = myclient["citizens_database"]
+myclient = pymongo.MongoClient("mongodb://containers_db_1")
+# myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+# db = myclient["new_citizens_database"]
+db = myclient.aNewDB
 token = '5400393109:AAGWSE_fmn0sW61LTONHXkPy8q0L34yxc3k'  # helper2022
 bot = telebot.TeleBot(token)
 app = Flask(__name__)
@@ -432,8 +434,9 @@ class Citizen(object):
             # mycol = mydb["people"]
             citizenDataToCSV = [self.citizen_data]
             print(citizenDataToCSV)
+            self.citizen_data['_id'] = time.time()
             citizenDataToDb = self.citizen_data
-            write_to_base(citizenDataToDb)
+            write_to_base(citizenDataToDb, self._id)
             # write_to_csv(citizenDataToCSV)
             text_to_send = str(self.citizen_data)
             # send_message(url, self._id, text_to_send)
@@ -453,12 +456,16 @@ class Citizen(object):
         #     return
 
 
-def write_to_base(citizenDataToDb):
+def write_to_base(citizenDataToDb, chat_id):
     mycol = db["people"]
     # mycol = mydb["people"]
     try:
+        text_to_send = f'TRY in write_to_base'
+        send_message(url, chat_id, text_to_send)
         mycol.insert_one(citizenDataToDb)
-    except:
+    except Exception as e:
+        text_to_send = f'ERROR in write_to_base: {e}'
+        send_message(url, chat_id, text_to_send)
         pass
 
 
@@ -505,7 +512,9 @@ def helper2022():
         citizen.conversation(user_text)
 
     return f'<h1>Привет.Hi from helper2022 at '
-
+def fix_db():
+    result = myclient.drop_database('aNewDB')
+    pass
 
 keys = ['AaA', 'BaB', 'CcC']
 text = 'Hop-Hop'
@@ -514,4 +523,5 @@ if __name__ == '__main__':
     print(time.asctime())
     print('!!!!!!!!!!!!!!!!!')
     # ff = jj
+    # fix_db()
     app.run(host='0.0.0.0')
