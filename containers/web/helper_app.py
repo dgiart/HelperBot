@@ -1,6 +1,6 @@
-# 20.52 12/07/22 Home
-from flask import Flask
-from flask import request
+# 15.45 12/07/22 Home
+from flask import Flask, request, render_template
+# from flask import request
 # import requests
 import time
 import sys
@@ -14,8 +14,10 @@ from bot_funcs import T, log, get_chat_id, get_name, \
     get_text  # send_message, send_image, send_keyboard, delete_keyboard, get_chat_id, get_name, get_text
 from bot_funcs import date_verificator, delete_keyboard, send_message, send_keyboard
 
-myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-mydb = myclient["citizens_database"]
+myclient = pymongo.MongoClient("mongodb://containers_db_1")
+# myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+# db = myclient["new_citizens_database"]
+db = myclient.aNewDB
 token = '5400393109:AAGWSE_fmn0sW61LTONHXkPy8q0L34yxc3k'  # helper2022
 bot = telebot.TeleBot(token)
 app = Flask(__name__)
@@ -27,7 +29,11 @@ citizens = {}
 @app.route('/')
 def index():
     t = time.asctime()
-    return f'<h1> new hi from main at {t} !</h1>'
+    return render_template('index.html')
+
+@app.route('/wtf')
+def wtf():
+    return render_template('wtf.html')
 
 
 class Citizen(object):
@@ -126,7 +132,8 @@ class Citizen(object):
             # log(f'TEXT: {user_text}, R = {self.round}, row 145')
             if user_text == 'Полный список':
 
-                mycol = mydb["people"]
+                mycol = db["people"]
+                # mycol = mydb["people"]
                 log('Full unformation row 149')
                 cit = []
                 text_to_send = ''
@@ -171,7 +178,8 @@ class Citizen(object):
                 person = user_text
                 # get list of citizens
                 try:
-                    cits = mydb.people
+                    cits = db.people
+                    # cits = mydb.people
                     # find person by name
                     cit = cits.find_one({'fio': person})
                     text_to_send = f"1. ФИО: {cit['fio']}\n" \
@@ -430,9 +438,10 @@ class Citizen(object):
             # mycol = mydb["people"]
             citizenDataToCSV = [self.citizen_data]
             print(citizenDataToCSV)
+            self.citizen_data['_id'] = time.time()
             citizenDataToDb = self.citizen_data
-            write_to_base(citizenDataToDb)
-            write_to_csv(citizenDataToCSV)
+            write_to_base(citizenDataToDb, self._id)
+            # write_to_csv(citizenDataToCSV)
             text_to_send = str(self.citizen_data)
             # send_message(url, self._id, text_to_send)
             # try:
@@ -451,11 +460,16 @@ class Citizen(object):
         #     return
 
 
-def write_to_base(citizenDataToDb):
-    mycol = mydb["people"]
+def write_to_base(citizenDataToDb, chat_id):
+    mycol = db["people"]
+    # mycol = mydb["people"]
     try:
+        text_to_send = f'TRY in write_to_base'
+        send_message(url, chat_id, text_to_send)
         mycol.insert_one(citizenDataToDb)
-    except:
+    except Exception as e:
+        text_to_send = f'ERROR in write_to_base: {e}'
+        send_message(url, chat_id, text_to_send)
         pass
 
 
@@ -501,13 +515,17 @@ def helper2022():
             expirience = 'old'
         citizen.conversation(user_text)
 
-    return f'<h1>Привет.Hi from helper2022 at {t} </h1>'
-
+    return render_template('bot.html', T=t)
+def fix_db():
+    result = myclient.drop_database('aNewDB')
+    pass
 
 keys = ['AaA', 'BaB', 'CcC']
 text = 'Hop-Hop'
 if __name__ == '__main__':
     print(sys.version)
     print(time.asctime())
+    print('!!!!!!!!!!!!!!!!!')
     # ff = jj
-    app.run(debug=True, port=5000)
+    # fix_db()
+    app.run(host='0.0.0.0')
