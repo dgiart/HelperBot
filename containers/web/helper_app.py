@@ -1,6 +1,6 @@
 # 15.45 12/07/22 Home
-from flask import Flask
-from flask import request
+from flask import Flask, request, render_template
+# from flask import request
 # import requests
 import time
 import sys
@@ -29,7 +29,11 @@ citizens = {}
 @app.route('/')
 def index():
     t = time.asctime()
-    return f'<h1> new hi from main at {t} !</h1>'
+    return render_template('index.html')
+
+@app.route('/wtf')
+def wtf():
+    return render_template('wtf.html')
 
 
 class Citizen(object):
@@ -511,7 +515,7 @@ def helper2022():
             expirience = 'old'
         citizen.conversation(user_text)
 
-    return f'<h1>Привет.Hi from helper2022 at '
+    return render_template('bot.html', T=t)
 def fix_db():
     result = myclient.drop_database('aNewDB')
     pass
