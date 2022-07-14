@@ -8,5 +8,8 @@ def write_to_csv(citizenDataToDb):
 
 
 if __name__ == '__main__':
-    data = [{'fio': 'art', 'phone': '123'}, {'fio': 'bob', 'phone': '456'}]
-    write_to_csv(data)
+    x = '1.'
+    i = int(x)
+    print(i)
+    # data = [{'fio': 'art', 'phone': '123'}, {'fio': 'bob', 'phone': '456'}]
+    # write_to_csv(data)
