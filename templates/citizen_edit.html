@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<br>
+
+<br>
+<form  method="POST">
+        {{ form.hidden_tag() }}
+        <br>
+        {{ form.name.label }} {{form.name}}
+        <br>
+        {{ form.salary.label }} {{ form.salary }}
+        <br>
+        {{ form.department.label }} {{form.department }}
+        <br>
+        Enter a birthday: yy/mm/dd
+        <br>
+        {{ form.year.label }} {{form.year }}
+        {{ form.month.label }} {{form.month }}
+        {{ form.day.label }} {{form.day }}
+        <br>
+        {{ form.submit() }}
+    </form>
+{% endblock %}

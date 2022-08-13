@@ -1,6 +1,6 @@
-# 20.52 12/07/22 Home
-from flask import Flask
-from flask import request
+# 14.05 13/08/22 Home
+from flask import Flask, request, render_template
+# from flask import request
 # import requests
 import time
 import sys
@@ -24,10 +24,37 @@ id_list = []
 citizens = {}
 
 
+# @app.route('/')
+# def home():
+#     t = time.asctime()
+#     return f'Hi at {t}'
+
 @app.route('/')
 def index():
-    t = time.asctime()
-    return f'<h1> new hi from main at {t} !</h1>'
+    # t = time.asctime()
+    return render_template('index.html')
+
+
+@app.route('/showall')
+def showall():
+    mycol = mydb["people"]
+    # mycol = mydb["people"]
+    # log('Full unformation row 149')
+    cit = []
+    text_to_send = ''
+    row_num = 1
+    for x in mycol.find():
+        pers = f"ФИО: {x['fio']} , дата рождения: {x['birth']}"
+        cit.append(pers)
+    #
+
+    return render_template('showall.html', cit=cit)
+
+
+@app.route('/edit')
+def edit():
+    # t = time.asctime()
+    return render_template('citizen_edit.html')
 
 
 class Citizen(object):
@@ -58,8 +85,8 @@ class Citizen(object):
         if 'start' in user_text.lower() or 'старт' in user_text.lower() or 'Начать сначала'.lower() in user_text.lower() or 'Изменить'.lower() in user_text.lower():
             t = time.asctime()
             # log(f'row67 {t}')
-            keys = ['Внести данные.', 'Правила.', 'Просмотреть информацию.', 'Начать сначала.']#, '/start']
-            text = f'Привет {self._name}! Вас приветствует бот-помошник'
+            keys = ['Внести данные.', 'Правила.', 'Просмотреть информацию.', 'Начать сначала.']  # , '/start']
+            text = f'Привет {self._name}! Вас приветствует бот-помошник.'
             send_keyboard(self._id, keys, text, bot)
             self.round = 0
         if user_text.lower() == 'правила.':
@@ -395,27 +422,27 @@ class Citizen(object):
 
         if self.round == 20:
             self.citizen_data['photo_agreement'] = user_text
-            text_to_send= f'Проверьте внесенные данные'
+            text_to_send = f'Проверьте внесенные данные'
             send_message(url, self._id, text_to_send)
             text_to_send = f"1. ФИО: {self.citizen_data['fio']}\n" \
-                                   f"2. Телефон: {self.citizen_data['phone']}\n" \
-                                   f"3. Датa рождения: {self.citizen_data['birth']}\n" \
-                                   f"4. Адрес: {self.citizen_data['addr']}\n" \
-                                   f"5. Число проживающих: {self.citizen_data['people_num']}\n" \
-                                   f"6. ФИО и возраст проживающих: {self.citizen_data['people_fio']}\n" \
-                                   f"7. Есть ли среди проживающих инвалиды? {self.citizen_data['invalids']}\n" \
-                                   f"8. Наличие детей: {self.citizen_data['children']}\n" \
-                                   f"9. Возраст детей: {self.citizen_data['children_age']}\n" \
-                                   f"10. Небходимость продуктов питания: {self.citizen_data['food']}\n" \
-                                   f"11. Воды: {self.citizen_data['water']}\n" \
-                                   f"12. Лекарств: {self.citizen_data['drugs']}\n" \
-                                   f"13. Kоличество: {self.citizen_data['products_detail']}\n" \
-                                   f"14. Средства личной гигиены: {self.citizen_data['gigien']}\n" \
-                                   f"15. Kоличество {self.citizen_data['gigien_num']}\n" \
-                                   f"16. Памперсы: {self.citizen_data['pampers']}\n" \
-                                   f"17. Особенности диеты и т.п.: {self.citizen_data['diet']}\n" \
-                                   f"18. Cогласие на обработку персональных данных: {self.citizen_data['pers_data_agreement']} \n" \
-                                   f"19. Cогласие на фото/видео: {self.citizen_data['photo_agreement']}\n"
+                           f"2. Телефон: {self.citizen_data['phone']}\n" \
+                           f"3. Датa рождения: {self.citizen_data['birth']}\n" \
+                           f"4. Адрес: {self.citizen_data['addr']}\n" \
+                           f"5. Число проживающих: {self.citizen_data['people_num']}\n" \
+                           f"6. ФИО и возраст проживающих: {self.citizen_data['people_fio']}\n" \
+                           f"7. Есть ли среди проживающих инвалиды? {self.citizen_data['invalids']}\n" \
+                           f"8. Наличие детей: {self.citizen_data['children']}\n" \
+                           f"9. Возраст детей: {self.citizen_data['children_age']}\n" \
+                           f"10. Небходимость продуктов питания: {self.citizen_data['food']}\n" \
+                           f"11. Воды: {self.citizen_data['water']}\n" \
+                           f"12. Лекарств: {self.citizen_data['drugs']}\n" \
+                           f"13. Kоличество: {self.citizen_data['products_detail']}\n" \
+                           f"14. Средства личной гигиены: {self.citizen_data['gigien']}\n" \
+                           f"15. Kоличество {self.citizen_data['gigien_num']}\n" \
+                           f"16. Памперсы: {self.citizen_data['pampers']}\n" \
+                           f"17. Особенности диеты и т.п.: {self.citizen_data['diet']}\n" \
+                           f"18. Cогласие на обработку персональных данных: {self.citizen_data['pers_data_agreement']} \n" \
+                           f"19. Cогласие на фото/видео: {self.citizen_data['photo_agreement']}\n"
             send_message(url, self._id, text_to_send)
             keys = ['Сохранить', 'Изменить', 'Начать сначала']
             text = f'Что дальше?'
@@ -501,7 +528,8 @@ def helper2022():
             expirience = 'old'
         citizen.conversation(user_text)
 
-    return f'<h1>Привет.Hi from helper2022 at {t} </h1>'
+    return render_template('helper.html', T=t)
+    # return f'<h1>Привет.Hi from helper2022 at {t} </h1>'
 
 
 keys = ['AaA', 'BaB', 'CcC']

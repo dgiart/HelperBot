@@ -1,4 +1,7 @@
 import csv
+import sys
+# from flask_wtf
+from flask_wtf import FlaskForm
 def write_to_csv(citizenDataToDb):
     citizen_info = ['fio', 'phone']
     with open('citizens.csv', 'w') as file:
@@ -8,8 +11,10 @@ def write_to_csv(citizenDataToDb):
 
 
 if __name__ == '__main__':
-    x = '1.'
-    i = int(x)
-    print(i)
+    # help("modules")
+    print (FlaskForm)
+    # x = '1.'
+    # i = int(x)
+    # print(i)
     # data = [{'fio': 'art', 'phone': '123'}, {'fio': 'bob', 'phone': '456'}]
     # write_to_csv(data)
