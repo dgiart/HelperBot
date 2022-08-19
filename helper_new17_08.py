@@ -1,4 +1,4 @@
-# 14.05 13/08/22 Home
+# 07.58 19/08/22 Home
 from flask import Flask, request, render_template
 # from flask import request
 # import requests
@@ -13,7 +13,7 @@ import csv
 from bot_funcs import T, log, get_chat_id, get_name, \
     get_text  # send_message, send_image, send_keyboard, delete_keyboard, get_chat_id, get_name, get_text
 from bot_funcs import date_verificator, delete_keyboard, send_message, send_keyboard
-from bot_data import citizen_data, quastions
+from bot_data import citizen_data, questions, distr_nums, districts
 
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["citizens_database"]
@@ -23,7 +23,8 @@ app = Flask(__name__)
 url = "https://api.telegram.org/bot" + token + "/"
 id_list = []
 citizens = {}
-my_col_name = "people"
+my_col_name = "people_new17_08"
+distr_dict = dict(zip(distr_nums, districts))
 
 
 # @app.route('/')
@@ -67,7 +68,7 @@ class Citizen(object):
         self._name = name
         self.round = 0
         self.info_type = ''
-        self.quastions = quastions
+        self.quastions = questions
         self.citizen_data = citizen_data
 
     def conversation(self, user_text):
@@ -145,7 +146,7 @@ class Citizen(object):
             # log(f'TEXT: {user_text}, R = {self.round}, row 145')
             if user_text == 'Полный список':
 
-                mycol = mydb["people"]
+                mycol = mydb[my_col_name]
                 log('Full unformation row 149')
                 cit = []
                 text_to_send = ''
@@ -190,7 +191,8 @@ class Citizen(object):
                 person = user_text
                 # get list of citizens
                 try:
-                    cits = mydb.people
+                    # cits = mydb.people
+                    cits = mydb[my_col_name]
                     # find person by name
                     cit = cits.find_one({'fio': person})
                     text_to_send = f"1. ФИО: {cit['fio']}\n" \
@@ -252,7 +254,7 @@ class Citizen(object):
                     return
                 else:
                     # log('line 226')
-                    mycol = mydb["people"]
+                    mycol = mydb[my_col_name]
                     people_in_range = mycol.find({"birth_year": {"$gt": start_year, "$lt": fin_year}})
                     # if user_text == 'Информация по конкретному человеку':
                     # log(str(people_in_range) + 'line 230')
@@ -270,19 +272,34 @@ class Citizen(object):
 
     def insert_data(self, user_text):
         if self.round == 1:
+            # log('line274')
             text_to_send = self.quastions[self.round]
             send_message(url, self._id, text_to_send)
             self.round += 1
             return
         if self.round == 2:
-            self.citizen_data['fio'] = user_text
-            # log(user_text)
+            self.citizen_data['fio']['family'] = user_text
+            # log('line281' + str(self.citizen_data))
             text_to_send = self.quastions[self.round]
             send_message(url, self._id, text_to_send)
             self.round += 1
             return
 
         if self.round == 3:
+            self.citizen_data['fio']['name'] = user_text
+            # log('line289' + str(self.citizen_data))
+            text_to_send = self.quastions[self.round]
+            send_message(url, self._id, text_to_send)
+            self.round += 1
+            return
+        if self.round == 4:
+            self.citizen_data['fio']['paternal'] = user_text
+            # log('line296' + str(self.citizen_data))
+            text_to_send = self.quastions[self.round]
+            send_message(url, self._id, text_to_send)
+            self.round += 1
+            return
+        if self.round == 5:
             self.citizen_data['phone'] = user_text
             # log(user_text)
             text_to_send = self.quastions[self.round]
@@ -290,7 +307,7 @@ class Citizen(object):
             self.round += 1
             return
 
-        if self.round == 4:
+        if self.round == 6:
             self.citizen_data['birth'] = user_text
             # self.date = self.citizen_data['birth']
             if date_verificator(self.citizen_data['birth']):
@@ -306,16 +323,45 @@ class Citizen(object):
                 text_to_send = 'Неверный формат даты!!!'
                 send_message(url, self._id, text_to_send)
                 return
-        if self.round == 5:
-            self.citizen_data['addr'] = user_text
+        if self.round == 7:
+            self.citizen_data['addr']['city'] = user_text
+            # log('line327' + f'round: {self.round}' + str(self.citizen_data))
+            text_to_send = self.quastions[self.round]
+            send_message(url, self._id, text_to_send)
+            self.round += 1
+            return
+        if self.round == 8:
+            self.citizen_data['addr']['distr'] = user_text
             # log(user_text)
             text_to_send = self.quastions[self.round]
             send_message(url, self._id, text_to_send)
             self.round += 1
             return
-        if self.round == 6:
-            self.citizen_data['people_num'] = user_text
+        if self.round == 9:
+            self.citizen_data['addr']['street'] = user_text
             # log(user_text)
+            text_to_send = self.quastions[self.round]
+            send_message(url, self._id, text_to_send)
+            self.round += 1
+            return
+        if self.round == 10:
+            self.citizen_data['addr']['house'] = user_text
+            # log(user_text)
+            text_to_send = self.quastions[self.round]
+            send_message(url, self._id, text_to_send)
+            self.round += 1
+            return
+        if self.round == 11:
+            self.citizen_data['addr']['apartment'] = user_text
+            # log(user_text)
+            text_to_send = self.quastions[self.round]
+            send_message(url, self._id, text_to_send)
+            self.round += 1
+            return
+
+        if self.round == 12:
+            self.citizen_data['people_num'] = user_text
+            log('line364' + f'round: {self.round}' + str(self.citizen_data))
             text_to_send = self.quastions[self.round]
             send_message(url, self._id, text_to_send)
             self.round += 1
@@ -471,7 +517,7 @@ class Citizen(object):
 
 
 def write_to_base(citizenDataToDb):
-    mycol = mydb["people"]
+    mycol = mydb[my_col_name]
     try:
         mycol.insert_one(citizenDataToDb)
     except:
@@ -499,7 +545,7 @@ def helper2022():
             # log('line_385')
             r = request.get_json()
             req = str(r)
-            log(t + 'line_427' + t)
+            # log(t + 'line_427' + t)
             # log(str(get_chat_id(r)) + 'line 389')
             chat_id = get_chat_id(r)
             name = get_name(r)

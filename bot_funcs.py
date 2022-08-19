@@ -7,7 +7,7 @@ T = time.asctime()
 # getters
 def get_chat_id(res):
     if 'message' in res:
-        log('in get_chat_id' + str(res) + 'line_11')
+        # log('in get_chat_id' + str(res) + 'line_11')
         id = res['message']['chat']['id']
     else:
         return 0
