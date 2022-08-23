@@ -13,7 +13,7 @@ import csv
 from bot_funcs import T, log, get_chat_id, get_name, \
     get_text  # send_message, send_image, send_keyboard, delete_keyboard, get_chat_id, get_name, get_text
 from bot_funcs import date_verificator, delete_keyboard, send_message, send_keyboard
-from bot_data import citizen_data, questions, distr_nums, districts
+from bot_data import citizen_data, questions, distr_nums, districts, days, monthes
 
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["citizens_database"]
@@ -25,6 +25,7 @@ id_list = []
 citizens = {}
 my_col_name = "people_new17_08"
 distr_dict = dict(zip(distr_nums, districts))
+monthes_dict = dict(zip(monthes, range(1, 13)))
 
 
 # @app.route('/')
@@ -70,6 +71,7 @@ class Citizen(object):
         self.info_type = ''
         self.quastions = questions
         self.citizen_data = citizen_data
+        self.command = ''
 
     def conversation(self, user_text):
         # log_text = 'line 88 in conversation'
@@ -147,18 +149,22 @@ class Citizen(object):
             if user_text == 'Полный список':
 
                 mycol = mydb[my_col_name]
-                log('Full unformation row 149')
+                log('Full information row 149')
                 cit = []
                 text_to_send = ''
                 row_num = 1
                 for x in mycol.find():
+                    # log(f'for x in mycol.find() line 155, x: {str(x)}')
                     cit.append(x)
                 # text_to_send = str(cit)
+                # log(text_to_send)
                 for i in range(len(cit)):
                     # log(text_to_send)
                     try:
-                        text_to_send = text_to_send + str(i) + '. ' + cit[i]['fio'] + '\n'
-
+                        log('line 162')
+                        log(str(cit[i]))
+                        text_to_send = text_to_send + str(i) + '. ' + cit[i]['fio']['family'] + '\n'
+                        log(text_to_send)
                     # text_to_send = text_to_send + cit + '\n'
                     except:
                         pass
@@ -320,21 +326,30 @@ class Citizen(object):
                 self.round += 1
                 return
             else:
-                text_to_send = 'Неверный формат даты!!!'
+                text_to_send = 'Неверный формат даты'
                 send_message(url, self._id, text_to_send)
                 return
         if self.round == 7:
             self.citizen_data['addr']['city'] = user_text
             # log('line327' + f'round: {self.round}' + str(self.citizen_data))
-            text_to_send = self.quastions[self.round]
-            send_message(url, self._id, text_to_send)
+            text_to_send = 'Выберите район'
+
+            # keys = [el for el in districts]
+            # keys = days
+            keys = districts
+
+            send_keyboard(self._id, keys, text_to_send, bot)
+            # text_to_send = self.quastions[self.round]
+            # send_message(url, self._id, text_to_send)
             self.round += 1
             return
+
         if self.round == 8:
             self.citizen_data['addr']['distr'] = user_text
             # log(user_text)
             text_to_send = self.quastions[self.round]
-            send_message(url, self._id, text_to_send)
+            delete_keyboard(self._id, text_to_send, bot)
+            # send_message(url, self._id, text_to_send)
             self.round += 1
             return
         if self.round == 9:
