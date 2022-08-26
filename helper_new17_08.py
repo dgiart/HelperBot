@@ -1,4 +1,4 @@
-# 07.58 19/08/22 Home
+# 11.04 26/08/22 Home
 from flask import Flask, request, render_template
 # from flask import request
 # import requests
@@ -72,6 +72,11 @@ class Citizen(object):
         self.quastions = questions
         self.citizen_data = citizen_data
         self.command = ''
+        self.are_children = False
+        self.need_food = False
+        self.need_drugs = False
+        self.need_gigien = False
+        self.need_pampers = False
 
     def conversation(self, user_text):
         # log_text = 'line 88 in conversation'
@@ -163,7 +168,8 @@ class Citizen(object):
                     try:
                         log('line 162')
                         log(str(cit[i]))
-                        text_to_send = text_to_send + str(i) + '. ' + cit[i]['fio']['family'] + '\n'
+                        text_to_send = text_to_send + str(i) + '. ' + cit[i]['fio']['family'] +', ' + cit[i]['fio']['name'] + ', '  + cit[i]['fio']['paternal'] + '\n'
+                        # text_to_send = text_to_send + str(i) + '. ФИО: ' + cit[i]['fio']['family'] +', ДР: ' +cit[i]['birth'] + '\n'
                         log(text_to_send)
                     # text_to_send = text_to_send + cit + '\n'
                     except:
@@ -376,76 +382,197 @@ class Citizen(object):
 
         if self.round == 12:
             self.citizen_data['people_num'] = user_text
-            log('line364' + f'round: {self.round}' + str(self.citizen_data))
-            text_to_send = self.quastions[self.round]
-            send_message(url, self._id, text_to_send)
-            self.round += 1
-            return
-        if self.round == 7:
-            self.citizen_data['people_fio'] = user_text
-            # log(user_text)
-            text_to_send = self.quastions[self.round]
-            send_message(url, self._id, text_to_send)
-            self.round += 1
-            return
-        if self.round == 8:
-            self.citizen_data['invalids'] = user_text
-            # log(user_text)
-            text_to_send = self.quastions[self.round]
-            send_message(url, self._id, text_to_send)
-            self.round += 1
-            return
-        if self.round == 9:
-            self.citizen_data['children'] = user_text
-            # log(user_text)
-            text_to_send = self.quastions[self.round]
-            send_message(url, self._id, text_to_send)
-            self.round += 1
-            return
-        if self.round == 10:
-            self.citizen_data['children_age'] = user_text
-            # log(user_text)
-            text_to_send = self.quastions[self.round]
-            send_message(url, self._id, text_to_send)
-            self.round += 1
-            return
-        if self.round == 11:
-            self.citizen_data['food'] = user_text
-            # log(user_text)
-            text_to_send = self.quastions[self.round]
-            send_message(url, self._id, text_to_send)
-            self.round += 1
-            return
-        if self.round == 12:
-            self.citizen_data['drugs'] = user_text
-            # log(user_text)
+            # log('line364' + f'round: {self.round}' + str(self.citizen_data))
             text_to_send = self.quastions[self.round]
             send_message(url, self._id, text_to_send)
             self.round += 1
             return
         if self.round == 13:
-            self.citizen_data['water'] = user_text
+            self.citizen_data['people_fio'] = user_text
             # log(user_text)
             text_to_send = self.quastions[self.round]
-            send_message(url, self._id, text_to_send)
+            keys = ['да', 'нет']
+            send_keyboard(self._id, keys, text_to_send, bot)
+            # send_message(url, self._id, text_to_send)
             self.round += 1
             return
         if self.round == 14:
-            self.citizen_data['products_detail'] = user_text
+            self.citizen_data['invalids'] = user_text
             # log(user_text)
             text_to_send = self.quastions[self.round]
-            send_message(url, self._id, text_to_send)
+            keys = ['да', 'нет']
+            send_keyboard(self._id, keys, text_to_send, bot)
+            # send_message(url, self._id, text_to_send)
             self.round += 1
             return
         if self.round == 15:
-            self.citizen_data['gigien'] = user_text
+            self.citizen_data['children'] = user_text
+            # log(str(self.citizen_data) + 'line 404')
+            if user_text == 'да':
+                text_to_send = self.quastions[self.round]
+                delete_keyboard(self._id, text_to_send, bot)
+                # send_message(url, self._id, text_to_send)
+                self.are_children = True
+                self.round += 1
+                return
+            else:
+                self.round += 1
+                log(user_text + 'line416' + str(self.round))
+                text_to_send = self.quastions[self.round]
+                keys = ['да', 'нет']
+                send_keyboard(self._id, keys, text_to_send, bot)
+                self.round += 1
+                return
+            # return
+        if self.round == 16:
+            if self.are_children:
+                self.citizen_data['children_age'] = user_text
             # log(user_text)
             text_to_send = self.quastions[self.round]
-            send_message(url, self._id, text_to_send)
+            keys = ['да', 'нет']
+            send_keyboard(self._id, keys, text_to_send, bot)
             self.round += 1
             return
+        if self.round == 17:
+            # log(str(self.citizen_data) + 'line 425')
+            self.citizen_data['food'] = user_text
+            # log(user_text + 'line 429')
+            if user_text == 'да':
+                text_to_send = self.quastions[self.round]
+                log(user_text + 'line 431')
+                delete_keyboard(self._id, text_to_send, bot)
+                # send_message(url, self._id, text_to_send)
+                self.need_food = True
+                self.round += 1
+                return
+            else:
+                self.round += 1
+                text_to_send = self.quastions[self.round]
+                keys = ['да', 'нет']
+                send_keyboard(self._id, keys, text_to_send, bot)
+                # send_message(url, self._id, text_to_send)
+                self.round += 1
+                return
+        if self.round == 18:
+            if self.need_food:
+                self.citizen_data['diet'] = user_text
+            text_to_send = self.quastions[self.round]
+            keys = ['да', 'нет']
+            send_keyboard(self._id, keys, text_to_send, bot)
+            # send_message(url, self._id, text_to_send)
+            self.round += 1
+            return
+        if self.round == 19:
+            self.citizen_data['water'] = user_text
+            # log(user_text)
+            text_to_send = self.quastions[self.round]
+            keys = ['да', 'нет']
+            send_keyboard(self._id, keys, text_to_send, bot)
+            # send_message(url, self._id, text_to_send)
+            self.round += 1
+            return
+
+        if self.round == 20:
+            self.citizen_data['drugs'] = user_text
+            if user_text == 'да':
+                # log(str(self.citizen_data) + 'line 456')
+                # log(user_text)
+                text_to_send = self.quastions[self.round]
+                delete_keyboard(self._id, text_to_send, bot)
+                # send_message(url, self._id, text_to_send)
+                self.need_drugs = True
+                self.round += 1
+                return
+            else:
+                self.round += 1
+                text_to_send = self.quastions[self.round]
+                keys = ['да', 'нет']
+                send_keyboard(self._id, keys, text_to_send, bot)
+                self.round += 1
+                return
+
+
+        if self.round == 21:
+            if self.need_drugs:
+                self.citizen_data['drugs_detail'] = user_text
+            # log(user_text)
+            text_to_send = self.quastions[self.round]
+            keys = ['да', 'нет']
+            send_keyboard(self._id, keys, text_to_send, bot)
+            self.round += 1
+            return
+        if self.round == 22:
+            self.citizen_data['gigien'] = user_text
+            if user_text == 'да':
+                log(str(self.citizen_data) + 'line486')
+                self.need_gigien = True
+                text_to_send = self.quastions[self.round]
+                delete_keyboard(self._id, text_to_send, bot)
+                # send_message(url, self._id, text_to_send)
+                self.round += 1
+                return
+            else:
+                self.round += 1
+                text_to_send = self.quastions[self.round]
+                keys = ['да', 'нет']
+                send_keyboard(self._id, keys, text_to_send, bot)
+                self.round += 1
+                return
+        if self.round == 23:
+            if self.need_gigien:
+                self.citizen_data['gigien_detail'] = user_text
+            # log(user_text)
+            text_to_send = self.quastions[self.round]
+            keys = ['да', 'нет']
+            send_keyboard(self._id, keys, text_to_send, bot)
+            self.round += 1
+            return
+        if self.round == 24:
+            self.citizen_data['pampers'] = user_text
+            if user_text == 'да':
+                # log(str(self.citizen_data) + 'line531')
+                self.need_pampers = True
+                text_to_send = self.quastions[self.round]
+                delete_keyboard(self._id, text_to_send, bot)
+                # send_message(url, self._id, text_to_send)
+                self.round += 1
+                return
+            else:
+                self.round += 1
+                text_to_send = self.quastions[self.round]
+                delete_keyboard(self._id, text_to_send, bot)
+                self.round += 1
+                return
+        if self.round == 25:
+            if self.need_pampers:
+                self.citizen_data['pampers_detail'] = user_text
+                log(str(self.citizen_data) + 'line531')
+            # log(user_text)
+            text_to_send = self.quastions[self.round]
+            keys = ['да']
+            send_keyboard(self._id, keys, text_to_send, bot)
+            self.round += 1
+            return
+        if self.round == 26:
+            self.citizen_data['pers_data_agreement'] = user_text
+            text_to_send = self.quastions[self.round]
+            keys = ['да']
+            send_keyboard(self._id, keys, text_to_send, bot)
+            self.round += 1
+            return
+        if self.round == 27:
+            self.citizen_data['photo_agreement'] = user_text
+            citizenDataToDb = self.citizen_data
+            write_to_base(citizenDataToDb)
+            text_to_send = "Saved to db"
+            keys = ['да']
+            send_keyboard(self._id, keys, text_to_send, bot)
+            self.round += 1
+            return
+
+
         if self.round == 16:
-            self.citizen_data['gigien_num'] = user_text
+            self.citizen_data['drugs_detail'] = user_text
             # log(user_text)
             text_to_send = self.quastions[self.round]
             send_message(url, self._id, text_to_send)
