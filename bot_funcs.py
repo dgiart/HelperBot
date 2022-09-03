@@ -1,6 +1,7 @@
 from telebot import types
 import time
 import requests
+
 T = time.asctime()
 
 
@@ -38,7 +39,7 @@ def get_text(res):
     if 'message' in res:
         text = res['message']['text']
     else:
-         return ''
+        return ''
     return text
 
 
@@ -71,6 +72,7 @@ def delete_keyboard(chat_id, text, _bot):
     _del = types.ReplyKeyboardRemove()
     _bot.send_message(chat_id, text, reply_markup=_del)
 
+
 # def calendar_handler(bot,update):
 #     update.message.reply_text("Please select a date: ",
 #                         reply_markup=telegramcalendar.create_calendar())
@@ -90,6 +92,15 @@ def log(log_text):
 
 
 # Verificators
+def phone_verificator(phone):
+    if len(phone) != 10:
+        return False
+    try:
+        return phone.isdigit()
+    except:
+        return False
+
+
 def date_verificator(date):
     verificated = True
     dates = date.split('.')
@@ -109,3 +120,22 @@ def date_verificator(date):
         verificated = False
 
     return verificated
+
+
+def show_person(cit, url, _id):
+    text_to_send = f"1. Фамилия: {cit['fio']['family']}\n" \
+                   f"2. Имя: {cit['fio']['name']}\n" \
+                   f"3. Отчество: {cit['fio']['paternal']}\n" \
+                   f"4. Телефон: {cit['phone']}\n" \
+                   f"5. Датa рождения: {cit['birth']}\n" \
+                   f"6. Город: {cit['addr']['city']}\n" \
+                   f"7. Район: {cit['addr']['distr']}\n" \
+                   f"8. Улица: {cit['addr']['street']}\n" \
+                   f"9. Дом: {cit['addr']['house']}\n" \
+                   f"8. Число прживающих: {cit['people_num']}\n" \
+                   f"id: {cit['_id']}"
+    # keys = ['Начать сначала']
+    # send_keyboard(_id, keys, text_to_send, bot)
+    send_message(url, _id, text_to_send)
+    # log(str(self.round) + 'line199')
+    return

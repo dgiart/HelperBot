@@ -12,7 +12,7 @@ from datetime import datetime
 import csv
 from bot_funcs import T, log, get_chat_id, get_name, \
     get_text  # send_message, send_image, send_keyboard, delete_keyboard, get_chat_id, get_name, get_text
-from bot_funcs import date_verificator, delete_keyboard, send_message, send_keyboard
+from bot_funcs import date_verificator, phone_verificator, delete_keyboard, send_message, send_keyboard, show_person
 from bot_data import citizen_data, questions, distr_nums, districts, days, monthes
 
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
@@ -77,6 +77,7 @@ class Citizen(object):
         self.need_drugs = False
         self.need_gigien = False
         self.need_pampers = False
+        self.cits_dict = {}
 
     def conversation(self, user_text):
         # log_text = 'line 88 in conversation'
@@ -168,7 +169,8 @@ class Citizen(object):
                     try:
                         # log('line 162')
                         # log(str(cit[i]))
-                        text_to_send = text_to_send + str(i + 1) + '. ' + cit[i]['fio']['family'] +', ' + cit[i]['fio']['name'] + ', '  + cit[i]['fio']['paternal'] + '\n'
+                        text_to_send = text_to_send + str(i + 1) + '. ' + cit[i]['fio']['family'] + ', ' + \
+                                       cit[i]['fio']['name'] + ', ' + cit[i]['fio']['paternal'] + '\n'
                         # text_to_send = text_to_send + str(i) + '. ФИО: ' + cit[i]['fio']['family'] +', ДР: ' +cit[i]['birth'] + '\n'
                         # log(text_to_send)
                     # text_to_send = text_to_send + cit + '\n'
@@ -201,7 +203,7 @@ class Citizen(object):
             # log(self.info_type + 'row178')
             if self.info_type == 'конкретному':
                 person = user_text
-                log('line 203')
+                # log('line 203')
                 # get list of citizens
                 try:
                     # cits = mydb.peopleperson
@@ -211,59 +213,42 @@ class Citizen(object):
                     cits_cursor = cits.find({'fio.family': person})
                     cits_list = list(cits_cursor)
                     cits_num = len(cits_list)
-                    # log(str(len(list(cit))))
+                    self.cits_dict = dict(zip(range(1, len(cits_list) + 1), cits_list))
+                    # log(str(self.cits_dict) + 'line216')
+                    # log(str(cits_list) + 'line217')
+                    if cits_num == 0:
+                        text_to_send = f'В списке нет человек с фамилией {person}'
+                        keys = ['Начать сначала']
+                        send_keyboard(self._id, keys, text_to_send, bot)
+                        # send_message(url, self._id, text_to_send)
+                        # self.round -= 2
+                        return
                     if cits_num == 1:
                         cit = cits_list[0]
-                        text_to_send = f"1. Фамилия: {cit['fio']['family']}\n" \
-                                       f"2. Имя: {cit['fio']['name']}\n" \
-                                       f"3. Отчество: {cit['fio']['paternal']}\n" \
-                                       f"4. Телефон: {cit['phone']}\n" \
-                                       f"5. Датa рождения: {cit['birth']}\n" \
-                                       f"6. Город: {cit['addr']['city']}\n" \
-                                       f"7. Район: {cit['addr']['distr']}\n" \
-                                       f"8. Улица: {cit['addr']['street']}\n" \
-                                       f"9. Улица: {cit['addr']['street']}\n" \
-                                       f"8. Число прживающих: {cit['people_num']}\n" \
-                                       f"id: {cit['_id']}"
-                                       # f"6. ФИО и возраст проживающих: {cit['people_fio']}\n" \
-                                       # f"7. Есть ли среди проживающих инвалиды? {cit['invalids']}\n" \
-                                       # f"8. Наличие детей: {cit['children']}\n" \
-                                       # f"9. Возраст детей: {cit['children_age']}\n" \
-                                       # f"10. Небходимость продуктов питания: {cit['food']}\n" \
-                                       # f"11. Воды: {cit['water']}\n" \
-                                       # f"12. Лекарств: {cit['drugs']}\n" \
-                                       # f"13. Kоличество: {cit['products_detail']}\n" \
-                                       # f"14. Средства личной гигиены: {cit['gigien']}\n" \
-                                       # f"15. Kоличество {cit['gigien_num']}\n" \
-                                       # f"16. Памперсы: {cit['pampers']}\n" \
-                                       # f"17. Особенности диеты и т.п.: {cit['diet']}\n" \
-                                       # f"18. Cогласие на обработку персональных данных: {cit['pers_data_agreement']} \n" \
-                                       # f"19. Cогласие на фото/видео: {cit['photo_agreement']}\n"
-                        # text_to_send = f"1. ФИО: {cit['fio']}\n" \
-                        #                f"2. Дату рождения: {cit['birth']}\n" \
-                        #                f"3. Диагноз: {cit['diag']}\n" \
-                        #                f"4. История: {cit['history']}\n" \
-                        #                f"5. Адрес: {cit['addr']}\n" \
-                        #                f"6. Примечание: {cit['note']}\n" \
-                        #                f"7. Сопровождающий: {cit['accompan']}\n" \
-                        #                f"8. Телефон: {cit['phone']}\n" \
-                        #                f"9. Район: {cit['district']}"
-                        send_message(url, self._id, text_to_send)
+                        show_person(cit, url, self._id)
+                        send_message(url, self._id, 'line252 Text sent')
+                        text_to_send = 'Что дальше?'
+                        keys = ['Начать сначала']
+                        send_keyboard(self._id, keys, text_to_send, bot)
                         # log(str(self.round) + 'line199')
+                        # self.round -= 2
                         return
                     else:
-                        text_to_send = f'В списке {cits_num} человек с фамилией {person}. Укажите номер человека из списка \n'\
+                        text_to_send = f'В списке {cits_num} человек с фамилией {person}. Укажите номер человека из списка \n' \
 
                         send_message(url, self._id, text_to_send)
-                        keys = range(1, cits_num + 1)
+                        keys = list(range(1, cits_num + 1))
+                        keys.append('Начать сначала')
                         text_to_send = ''
                         for i in range(0, cits_num):
-                            log('line261')
-                            log('line262' + cits_list[i]['fio']['family'])
-                            text_to_send = text_to_send + str(i + 1) + '. ' + cits_list[i]['fio']['family'] +', ' + cits_list[i]['fio']['name'] + ', ' + cits_list[i]['fio']['paternal'] + '\n'
-                            log('line264' + text_to_send)
-                        log('line265: ' + text_to_send)
+                            # log('line261')
+                            # log('line262' + cits_list[i]['fio']['family'])
+                            text_to_send = text_to_send + str(i + 1) + '. ' + cits_list[i]['fio']['family'] + ', ' + \
+                                           cits_list[i]['fio']['name'] + ', ' + cits_list[i]['fio']['paternal'] + '\n'
+                            # log('line264' + text_to_send)
+                        # log('line265: ' + text_to_send)
                         send_keyboard(self._id, keys, text_to_send, bot)
+                        self.round += 1
                 except:
                     # log(str(self.round) + 'line201')
                     self.round -= 1
@@ -302,11 +287,19 @@ class Citizen(object):
                         people_list.append(x)
                         # print(f"ФИО: {x['fio']}, дата рождения: {x['birth']}")
                     for i in range(len(people_list)):
-                        text_to_send += str(
-                            i + 1) + f") ФИО: {people_list[i]['fio']}, дата рождения: {people_list[i]['birth']}\n"
+                        text_to_send += str(i + 1) + f") ФИО: {people_list[i]['fio']}, дата рождения: {people_list[i]['birth']}\n"
                     send_message(url, self._id, text_to_send)
                     self.round -= 1
                     return
+        if self.round == 4:
+            if self.info_type == 'конкретному':
+                log(str(self.cits_dict) + 'line296')
+                log(user_text + ' line297')
+                log(str(self.cits_dict[int(user_text)]) + 'line298')
+                cit = self.cits_dict[int(user_text)]
+                show_person(cit, url, self._id)
+                text_to_send = 'line290 ' + str(self.round)
+                send_message(url, self._id, text_to_send)
 
     def insert_data(self, user_text):
         if self.round == 1:
@@ -338,12 +331,19 @@ class Citizen(object):
             self.round += 1
             return
         if self.round == 5:
-            self.citizen_data['phone'] = user_text
-            # log(user_text)
-            text_to_send = self.quastions[self.round]
-            send_message(url, self._id, text_to_send)
-            self.round += 1
-            return
+            if phone_verificator(user_text):
+                self.citizen_data['phone'] = user_text
+                # log(user_text)
+                text_to_send = self.quastions[self.round]
+                send_message(url, self._id, text_to_send)
+                self.round += 1
+                return
+            else:
+                log(user_text + 'line342')
+                text_to_send = 'Неверный формат'
+                send_message(url, self._id, text_to_send)
+                return
+
 
         if self.round == 6:
             self.citizen_data['birth'] = user_text
@@ -517,7 +517,6 @@ class Citizen(object):
                 self.round += 1
                 return
 
-
         if self.round == 21:
             if self.need_drugs:
                 self.citizen_data['drugs_detail'] = user_text
@@ -595,7 +594,6 @@ class Citizen(object):
             send_keyboard(self._id, keys, text_to_send, bot)
             self.round += 1
             return
-
 
         if self.round == 16:
             self.citizen_data['drugs_detail'] = user_text
