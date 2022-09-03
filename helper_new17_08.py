@@ -732,8 +732,8 @@ def helper2022():
             expirience = 'old'
         citizen.conversation(user_text)
 
-    return render_template('helper_new_17_08.html', T=t)
-    # return f'<h1>Привет.Hi from helper2022 at {t} </h1>'
+    # return render_template('helper_new_17_08.html', T=t)
+    return f'<h1>Привет.Hi from helper2022 at {t} </h1>'
 
 
 keys = ['AaA', 'BaB', 'CcC']
