@@ -154,7 +154,7 @@ class Citizen(object):
             if user_text == 'Полный список':
 
                 mycol = mydb[my_col_name]
-                log('Full information row 149')
+                # log('Full information row 149')
                 cit = []
                 text_to_send = ''
                 row_num = 1
@@ -166,11 +166,11 @@ class Citizen(object):
                 for i in range(len(cit)):
                     # log(text_to_send)
                     try:
-                        log('line 162')
-                        log(str(cit[i]))
-                        text_to_send = text_to_send + str(i) + '. ' + cit[i]['fio']['family'] +', ' + cit[i]['fio']['name'] + ', '  + cit[i]['fio']['paternal'] + '\n'
+                        # log('line 162')
+                        # log(str(cit[i]))
+                        text_to_send = text_to_send + str(i + 1) + '. ' + cit[i]['fio']['family'] +', ' + cit[i]['fio']['name'] + ', '  + cit[i]['fio']['paternal'] + '\n'
                         # text_to_send = text_to_send + str(i) + '. ФИО: ' + cit[i]['fio']['family'] +', ДР: ' +cit[i]['birth'] + '\n'
-                        log(text_to_send)
+                        # log(text_to_send)
                     # text_to_send = text_to_send + cit + '\n'
                     except:
                         pass
@@ -180,7 +180,7 @@ class Citizen(object):
             if user_text == 'Информация по человеку':
                 # log(user_text + 'row164')
                 self.info_type = 'конкретному'
-                text_to_send = 'Ввидите ФИО (что бы увидеть список нажмите "Полный список" )'
+                text_to_send = 'Ввидите фамилию'
                 send_message(url, self._id, text_to_send)
                 self.round += 1
                 return
@@ -201,43 +201,69 @@ class Citizen(object):
             # log(self.info_type + 'row178')
             if self.info_type == 'конкретному':
                 person = user_text
+                log('line 203')
                 # get list of citizens
                 try:
-                    # cits = mydb.people
+                    # cits = mydb.peopleperson
                     cits = mydb[my_col_name]
                     # find person by name
-                    cit = cits.find_one({'fio': person})
-                    text_to_send = f"1. ФИО: {cit['fio']}\n" \
-                                   f"2. Телефон: {cit['phone']}\n" \
-                                   f"3. Датa рождения: {cit['birth']}\n" \
-                                   f"4. Адрес: {cit['addr']}\n" \
-                                   f"5. Число проживающих: {cit['people_num']}\n" \
-                                   f"6. ФИО и возраст проживающих: {cit['people_fio']}\n" \
-                                   f"7. Есть ли среди проживающих инвалиды? {cit['invalids']}\n" \
-                                   f"8. Наличие детей: {cit['children']}\n" \
-                                   f"9. Возраст детей: {cit['children_age']}\n" \
-                                   f"10. Небходимость продуктов питания: {cit['food']}\n" \
-                                   f"11. Воды: {cit['water']}\n" \
-                                   f"12. Лекарств: {cit['drugs']}\n" \
-                                   f"13. Kоличество: {cit['products_detail']}\n" \
-                                   f"14. Средства личной гигиены: {cit['gigien']}\n" \
-                                   f"15. Kоличество {cit['gigien_num']}\n" \
-                                   f"16. Памперсы: {cit['pampers']}\n" \
-                                   f"17. Особенности диеты и т.п.: {cit['diet']}\n" \
-                                   f"18. Cогласие на обработку персональных данных: {cit['pers_data_agreement']} \n" \
-                                   f"19. Cогласие на фото/видео: {cit['photo_agreement']}\n"
-                    # text_to_send = f"1. ФИО: {cit['fio']}\n" \
-                    #                f"2. Дату рождения: {cit['birth']}\n" \
-                    #                f"3. Диагноз: {cit['diag']}\n" \
-                    #                f"4. История: {cit['history']}\n" \
-                    #                f"5. Адрес: {cit['addr']}\n" \
-                    #                f"6. Примечание: {cit['note']}\n" \
-                    #                f"7. Сопровождающий: {cit['accompan']}\n" \
-                    #                f"8. Телефон: {cit['phone']}\n" \
-                    #                f"9. Район: {cit['district']}"
-                    send_message(url, self._id, text_to_send)
-                    # log(str(self.round) + 'line199')
-                    return
+                    # log(person)
+                    cits_cursor = cits.find({'fio.family': person})
+                    cits_list = list(cits_cursor)
+                    cits_num = len(cits_list)
+                    # log(str(len(list(cit))))
+                    if cits_num == 1:
+                        cit = cits_list[0]
+                        text_to_send = f"1. Фамилия: {cit['fio']['family']}\n" \
+                                       f"2. Имя: {cit['fio']['name']}\n" \
+                                       f"3. Отчество: {cit['fio']['paternal']}\n" \
+                                       f"4. Телефон: {cit['phone']}\n" \
+                                       f"5. Датa рождения: {cit['birth']}\n" \
+                                       f"6. Город: {cit['addr']['city']}\n" \
+                                       f"7. Район: {cit['addr']['distr']}\n" \
+                                       f"8. Улица: {cit['addr']['street']}\n" \
+                                       f"9. Улица: {cit['addr']['street']}\n" \
+                                       f"8. Число прживающих: {cit['people_num']}\n" \
+                                       f"id: {cit['_id']}"
+                                       # f"6. ФИО и возраст проживающих: {cit['people_fio']}\n" \
+                                       # f"7. Есть ли среди проживающих инвалиды? {cit['invalids']}\n" \
+                                       # f"8. Наличие детей: {cit['children']}\n" \
+                                       # f"9. Возраст детей: {cit['children_age']}\n" \
+                                       # f"10. Небходимость продуктов питания: {cit['food']}\n" \
+                                       # f"11. Воды: {cit['water']}\n" \
+                                       # f"12. Лекарств: {cit['drugs']}\n" \
+                                       # f"13. Kоличество: {cit['products_detail']}\n" \
+                                       # f"14. Средства личной гигиены: {cit['gigien']}\n" \
+                                       # f"15. Kоличество {cit['gigien_num']}\n" \
+                                       # f"16. Памперсы: {cit['pampers']}\n" \
+                                       # f"17. Особенности диеты и т.п.: {cit['diet']}\n" \
+                                       # f"18. Cогласие на обработку персональных данных: {cit['pers_data_agreement']} \n" \
+                                       # f"19. Cогласие на фото/видео: {cit['photo_agreement']}\n"
+                        # text_to_send = f"1. ФИО: {cit['fio']}\n" \
+                        #                f"2. Дату рождения: {cit['birth']}\n" \
+                        #                f"3. Диагноз: {cit['diag']}\n" \
+                        #                f"4. История: {cit['history']}\n" \
+                        #                f"5. Адрес: {cit['addr']}\n" \
+                        #                f"6. Примечание: {cit['note']}\n" \
+                        #                f"7. Сопровождающий: {cit['accompan']}\n" \
+                        #                f"8. Телефон: {cit['phone']}\n" \
+                        #                f"9. Район: {cit['district']}"
+                        send_message(url, self._id, text_to_send)
+                        # log(str(self.round) + 'line199')
+                        return
+                    else:
+                        text_to_send = f'В списке {cits_num} человек с фамилией {person}. Укажите номер человека из списка \n'\
+
+                        send_message(url, self._id, text_to_send)
+                        keys = range(1, cits_num + 1)
+                        text_to_send = ''
+                        for i in range(0, cits_num):
+                            log('line261')
+                            log('line262' + cits_list[i]['fio']['family'])
+                            text_to_send = text_to_send + str(i + 1) + '. ' + cits_list[i]['fio']['family'] +', ' + cits_list[i]['fio']['name'] + ', ' + cits_list[i]['fio']['paternal'] + '\n'
+                            log('line264' + text_to_send)
+                        log('line265: ' + text_to_send)
+                        send_keyboard(self._id, keys, text_to_send, bot)
                 except:
                     # log(str(self.round) + 'line201')
                     self.round -= 1
