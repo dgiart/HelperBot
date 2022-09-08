@@ -589,7 +589,7 @@ class Citizen(object):
             self.citizen_data['photo_agreement'] = user_text
             citizenDataToDb = self.citizen_data
             write_to_base(citizenDataToDb)
-            text_to_send = "Saved to db"
+            text_to_send = "Saved to db!!!"
             keys = ['да']
             send_keyboard(self._id, keys, text_to_send, bot)
             self.round += 1
