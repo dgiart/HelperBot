@@ -87,7 +87,7 @@ class Citizen(object):
             t = time.asctime()
             # log(f'row67 {t}')
             keys = ['Внести данные.', 'Правила.', 'Просмотреть информацию.', 'Начать сначала.']  # , '/start']
-            text = f'Привет {self._name}!! Вас приветствует бот-помошник.'
+            text = f'Привет {self._name}! Вас приветствует бот-помошник.'
             send_keyboard(self._id, keys, text, bot)
             self.round = 0
         if user_text.lower() == 'правила.':
@@ -565,7 +565,9 @@ class Citizen(object):
             else:
                 self.round += 1
                 text_to_send = self.quastions[self.round]
-                delete_keyboard(self._id, text_to_send, bot)
+                keys = ['да']
+                send_keyboard(self._id, keys, text_to_send, bot)
+                # delete_keyboard(self._id, text_to_send, bot)
                 self.round += 1
                 return
         if self.round == 25:
