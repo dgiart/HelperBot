@@ -1,4 +1,4 @@
-# 11.04 26/08/22 Home
+# 14.04 13/09/22 Home
 from flask import Flask, request, render_template
 # from flask import request
 # import requests
@@ -739,8 +739,8 @@ def helper2022():
 keys = ['AaA', 'BaB', 'CcC']
 text = 'Hop-Hop'
 if __name__ == '__main__':
-    print(sys.version)
-    print(time.asctime())
+    # print(sys.version)
+    # print(time.asctime())
     # ff = jj
     # app.run(debug=True, port=5000)
     app.run(debug=True, host='0.0.0.0', port=5000)
