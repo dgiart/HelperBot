@@ -28,15 +28,15 @@ distr_dict = dict(zip(distr_nums, districts))
 monthes_dict = dict(zip(monthes, range(1, 13)))
 
 
-# @app.route('/')
-# def home():
-#     t = time.asctime()
-#     return f'Hi at {t}'
-
 @app.route('/')
-def index():
-    # t = time.asctime()
-    return render_template('index.html')
+def home():
+    t = time.asctime()
+    return f'Hi at {t}'
+
+# @app.route('/')
+# def index():
+#     # t = time.asctime()
+#     return render_template('index.html')
 
 
 @app.route('/showall')
