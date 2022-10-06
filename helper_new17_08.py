@@ -31,7 +31,7 @@ monthes_dict = dict(zip(monthes, range(1, 13)))
 @app.route('/')
 def home():
     t = time.asctime()
-    return f'Hi at {t}'
+    return f'Hi! at {t}'
 
 # @app.route('/')
 # def index():
@@ -175,7 +175,9 @@ class Citizen(object):
                         # log(text_to_send)
                     # text_to_send = text_to_send + cit + '\n'
                     except:
+                        log(str(cit[i]))
                         pass
+                # log(str(len(cit)))
                 send_message(url, self._id, text_to_send)
                 # self.round += 1
                 return
@@ -589,83 +591,45 @@ class Citizen(object):
             return
         if self.round == 27:
             self.citizen_data['photo_agreement'] = user_text
-            citizenDataToDb = self.citizen_data
-            write_to_base(citizenDataToDb)
-            text_to_send = "Saved to db!!!"
-            keys = ['да']
-            send_keyboard(self._id, keys, text_to_send, bot)
-            self.round += 1
-            return
-
-        if self.round == 16:
-            self.citizen_data['drugs_detail'] = user_text
-            # log(user_text)
-            text_to_send = self.quastions[self.round]
-            send_message(url, self._id, text_to_send)
-            self.round += 1
-            return
-        if self.round == 17:
-            self.citizen_data['pampers'] = user_text
-            # log(user_text)
-            text_to_send = self.quastions[self.round]
-            send_message(url, self._id, text_to_send)
-            self.round += 1
-            return
-        if self.round == 18:
-            self.citizen_data['diet'] = user_text
-            # log(user_text)
-            text_to_send = self.quastions[self.round]
-            send_message(url, self._id, text_to_send)
-            self.round += 1
-            return
-        if self.round == 19:
-            self.citizen_data['pers_data_agreement'] = user_text
-            # log(user_text)
-            text_to_send = self.quastions[self.round]
-            send_message(url, self._id, text_to_send)
-            self.round += 1
-            return
-
-        if self.round == 20:
-            self.citizen_data['photo_agreement'] = user_text
             text_to_send = f'Проверьте внесенные данные'
             send_message(url, self._id, text_to_send)
-            text_to_send = f"1. ФИО: {self.citizen_data['fio']}\n" \
+            text_to_send = f"1. ФИО: {self.citizen_data['fio']['family']} {self.citizen_data['fio']['name']} {self.citizen_data['fio']['paternal']} \n" \
                            f"2. Телефон: {self.citizen_data['phone']}\n" \
                            f"3. Датa рождения: {self.citizen_data['birth']}\n" \
-                           f"4. Адрес: {self.citizen_data['addr']}\n" \
+                           f"4. Адрес: {self.citizen_data['addr']['street']}\n" \
                            f"5. Число проживающих: {self.citizen_data['people_num']}\n" \
                            f"6. ФИО и возраст проживающих: {self.citizen_data['people_fio']}\n" \
                            f"7. Есть ли среди проживающих инвалиды? {self.citizen_data['invalids']}\n" \
                            f"8. Наличие детей: {self.citizen_data['children']}\n" \
                            f"9. Возраст детей: {self.citizen_data['children_age']}\n" \
                            f"10. Небходимость продуктов питания: {self.citizen_data['food']}\n" \
-                           f"11. Воды: {self.citizen_data['water']}\n" \
-                           f"12. Лекарств: {self.citizen_data['drugs']}\n" \
-                           f"13. Kоличество: {self.citizen_data['products_detail']}\n" \
-                           f"14. Средства личной гигиены: {self.citizen_data['gigien']}\n" \
-                           f"15. Kоличество {self.citizen_data['gigien_num']}\n" \
-                           f"16. Памперсы: {self.citizen_data['pampers']}\n" \
-                           f"17. Особенности диеты и т.п.: {self.citizen_data['diet']}\n" \
-                           f"18. Cогласие на обработку персональных данных: {self.citizen_data['pers_data_agreement']} \n" \
-                           f"19. Cогласие на фото/видео: {self.citizen_data['photo_agreement']}\n"
+                           f"11. Особенности диеты и т.п.: {self.citizen_data['diet']}\n" \
+                           f"12. Воды: {self.citizen_data['water']}\n" \
+                           f"13. Лекарств: {self.citizen_data['drugs']}\n" \
+                           f"14. Kоличество: {self.citizen_data['drugs_detail']}\n" \
+                           f"15. Средства личной гигиены: {self.citizen_data['gigien']}\n" \
+                           f"16. Kоличество {self.citizen_data['gigien_detail']}\n" \
+                           f"17. Памперсы: {self.citizen_data['pampers']}\n" \
+                           f"18. Размер памперсов: {self.citizen_data['pampers_detail']}\n"\
+                           f"19. Cогласие на обработку персональных данных: {self.citizen_data['pers_data_agreement']} \n" \
+                           f"20. Cогласие на фото/видео: {self.citizen_data['photo_agreement']}\n"
             send_message(url, self._id, text_to_send)
             keys = ['Сохранить', 'Изменить', 'Начать сначала']
             text = f'Что дальше?'
             send_keyboard(self._id, keys, text, bot)
             self.round += 1
             return
-            # log(user_text)
-        if self.round == 21:
+
+        if self.round == 28:
             # if user_text == 'Просмотреть':
             #     text_to_send = 'You data'
             #     send_message(url, self._id, text_to_send)
             # mycol = mydb["people"]
-            citizenDataToCSV = [self.citizen_data]
-            print(citizenDataToCSV)
+            # citizenDataToCSV = [self.citizen_data]
+            # print(citizenDataToCSV)
             citizenDataToDb = self.citizen_data
             write_to_base(citizenDataToDb)
-            write_to_csv(citizenDataToCSV)
+            # write_to_csv(citizenDataToCSV)
             text_to_send = str(self.citizen_data)
             # send_message(url, self._id, text_to_send)
             # try:
@@ -735,7 +699,7 @@ def helper2022():
         citizen.conversation(user_text)
 
     # return render_template('helper_new_17_08.html', T=t)
-    return f'<h1>Привет.Hi from helper2022 at {t} </h1>'
+    return f'<h1>Привет. Hi from helper2022 at {t} </h1>'
 
 
 keys = ['AaA', 'BaB', 'CcC']
@@ -744,5 +708,5 @@ if __name__ == '__main__':
     # print(sys.version)
     # print(time.asctime())
     # ff = jj
-    # app.run(debug=True, port=5000)
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, port=5000)
+    # app.run(debug=True, host='0.0.0.0', port=5000)
