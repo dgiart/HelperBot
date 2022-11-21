@@ -149,7 +149,7 @@ class Citizen(object):
                 return
     def connect_with_admin(self, user_text):
         if self.round == 1:
-            text_to_send = 'Что требуется?'
+            text_to_send = 'Что бы именить данные введите фамилию'
             send_message(url, self._id, text_to_send)
             self.round += 1
             return
