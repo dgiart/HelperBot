@@ -86,7 +86,7 @@ class Citizen(object):
         if 'start' in user_text.lower() or 'старт' in user_text.lower() or 'Начать сначала'.lower() in user_text.lower() or 'Изменить'.lower() in user_text.lower():
             t = time.asctime()
             # log(f'row67 {t}')
-            keys = ['Внести данные.', 'Правила.', 'Просмотреть информацию.', 'Начать сначала.']  # , '/start']
+            keys = ['Внести данные.', 'Правила.', 'Просмотреть информацию.', 'Связаться с админом.', 'Начать сначала.']  # , '/start']
             text = f'Привет {self._name}!!! Вас приветствует бот-помошник.'
             send_keyboard(self._id, keys, text, bot)
             self.round = 0
@@ -129,6 +129,11 @@ class Citizen(object):
             # log('Просмотреть информацию 95')
             self.show_data(user_text)
             return
+        if user_text == 'Связаться с админом.':
+            self.command = 'Связаться с админом.'
+            self.round += 1
+            self.connect_with_admin(user_text)
+            return
         if self.round > 0:
             if self.command == 'Внести данные':
                 # log('Внести данные row 127')
@@ -139,6 +144,13 @@ class Citizen(object):
                 # log('Просмотреть информацию 103')
                 self.show_data(user_text)
                 return
+            if self.command == 'Связаться с админом.':
+                self.connect_with_admin(user_text)
+                return
+    def connect_with_admin(self, user_text):
+        text_to_send = 'Что требуется?'
+        send_message(url, self._id, text_to_send)
+        pass
 
     def show_data(self, user_text):
         # log(f'TEXT: {user_text}, R = {self.round}, row 109!!!')
