@@ -148,9 +148,11 @@ class Citizen(object):
                 self.connect_with_admin(user_text)
                 return
     def connect_with_admin(self, user_text):
-        text_to_send = 'Что требуется?'
-        send_message(url, self._id, text_to_send)
-        pass
+        if self.round == 1:
+            text_to_send = 'Что требуется?'
+            send_message(url, self._id, text_to_send)
+            self.round += 1
+            return
 
     def show_data(self, user_text):
         # log(f'TEXT: {user_text}, R = {self.round}, row 109!!!')
