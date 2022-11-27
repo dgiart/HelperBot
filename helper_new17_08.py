@@ -192,7 +192,7 @@ class Citizen(object):
                         log(str(cit[i]))
                         pass
                 # log(str(len(cit)))
-                text_to_send = '!!!!!!!!!!!'
+                # text_to_send = '!!!!!!!!!!!'
                 send_message(url, self._id, text_to_send)
                 # self.round += 1
                 return
