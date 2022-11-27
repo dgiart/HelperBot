@@ -157,7 +157,7 @@ class Citizen(object):
     def show_data(self, user_text):
         # log(f'TEXT: {user_text}, R = {self.round}, row 109!!!')
         if self.round == 1:
-            keys = ['Полный список', 'Информация по человеку', 'Информация по группе людей', 'Начать сначала']
+            keys = ['Полный список.', 'Информация по человеку', 'Информация по группе людей', 'Начать сначала']
             text = f'Какая информация Вас интересует?'
             send_keyboard(self._id, keys, text, bot)
             # log('show_data row 140')
