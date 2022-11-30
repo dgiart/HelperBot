@@ -13,7 +13,7 @@ import csv
 from bot_funcs import T, log, get_chat_id, get_name, \
     get_text  # send_message, send_image, send_keyboard, delete_keyboard, get_chat_id, get_name, get_text
 from bot_funcs import date_verificator, phone_verificator, delete_keyboard, send_message, send_keyboard, show_person
-from bot_data import citizen_data, questions, distr_nums, districts, days, monthes
+from bot_data import citizen_data, questions, distr_nums, districts, days, monthes, admin_id
 
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["citizens_database"]
@@ -149,9 +149,14 @@ class Citizen(object):
                 return
     def connect_with_admin(self, user_text):
         if self.round == 1:
-            text_to_send = 'Что бы изменить данные введите фамилию'
+            text_to_send = 'Напишите Ваше сообщение '
             send_message(url, self._id, text_to_send)
-            send_message(url, self._id, str(self._id))
+            # send_message(url, self._id, str(self._id))
+            self.round += 1
+            return
+        if self.round == 2:
+            text_to_send = f'User with id: {self._id}, and name: {self._name} wrote: {user_text}'
+            send_message(url, admin_id, text_to_send)
             self.round += 1
             return
 
