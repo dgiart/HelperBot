@@ -149,8 +149,9 @@ class Citizen(object):
                 return
     def connect_with_admin(self, user_text):
         if self.round == 1:
-            text_to_send = 'Что бы именить данные введите фамилию'
+            text_to_send = 'Что бы изменить данные введите фамилию'
             send_message(url, self._id, text_to_send)
+            send_message(url, self._id, str(self._id))
             self.round += 1
             return
 
@@ -189,7 +190,7 @@ class Citizen(object):
                         # log(text_to_send)
                     # text_to_send = text_to_send + cit + '\n'
                     except:
-                        log(str(cit[i]))
+                        # log(str(cit[i]))
                         pass
                 # log(str(len(cit)))
                 # text_to_send = '!!!!!!!!!!!'
